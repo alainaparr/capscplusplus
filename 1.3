@@ -1,0 +1,23 @@
+#include <iostream>
+
+int main() {
+    int quarters, dimes, nickels;
+
+    
+    std::cout << "Enter number of quarters: ";
+    std::cin >> quarters;
+
+    std::cout << "Enter number of dimes: ";
+    std::cin >> dimes;
+
+    std::cout << "Enter number of nickels: ";
+    std::cin >> nickels;
+
+    
+    int totalCents = quarters * 25 + dimes * 10 + nickels * 5;
+
+    
+    std::cout << "The coins are worth " << totalCents << " cents." << std::endl;
+
+    return 0;
+}

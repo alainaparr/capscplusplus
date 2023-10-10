@@ -1,0 +1,33 @@
+#include <iostream>
+#include <iomanip>
+
+int main() {
+    char gender;
+    double weight, height, age, bmr, chocolateBarCalories = 230;
+    int chocolateBars;
+    
+    std::cout << "Enter your gender (M/F): ";
+    std::cin >> gender;
+    std::cout << "Enter your weight in pounds: ";
+    std::cin >> weight;
+    std::cout << "Enter your height in inches: ";
+    std::cin >> height;
+    std::cout << "Enter your age in years: ";
+    std::cin >> age;
+    
+    if (gender == 'M' || gender == 'm') {
+        bmr = 66 + (6.3 * weight) + (12.9 * height) - (6.8 * age);
+    } else if (gender == 'F' || gender == 'f') {
+        bmr = 655 + (4.3 * weight) + (4.7 * height) - (4.7 * age);
+    } else {
+        std::cout << "Invalid gender input. Please enter M or F." << std::endl;
+        return 1;
+    }
+    
+    chocolateBars = static_cast<int>(bmr / chocolateBarCalories);
+
+    
+    std::cout << "Number of chocolate bars to maintain weight: " << chocolateBars << std::endl;
+
+    return 0;
+}

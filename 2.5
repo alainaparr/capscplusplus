@@ -1,0 +1,24 @@
+#include <iostream>
+
+int main() {
+    int maxCapacity, numPeople;
+
+    
+    std::cout << "Enter the maximum room capacity: ";
+    std::cin >> maxCapacity;
+    std::cout << "Enter the number of people attending the meeting: ";
+    std::cin >> numPeople;
+
+   
+    if (numPeople <= maxCapacity) {
+        int additionalPeople = maxCapacity - numPeople;
+        std::cout << "It is legal to hold the meeting.\n";
+        std::cout << "Additional people that may legally attend: " << additionalPeople << std::endl;
+    } else {
+        int excessPeople = numPeople - maxCapacity;
+        std::cout << "The meeting cannot be held as planned due to fire regulations.\n";
+        std::cout << "Number of people that must be excluded: " << excessPeople << std::endl;
+    }
+
+    return 0;
+}

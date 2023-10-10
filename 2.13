@@ -26,6 +26,7 @@ int main() {
     
     chocolateBars = static_cast<int>(bmr / chocolateBarCalories);
 
+
     
     std::cout << "Number of chocolate bars to maintain weight: " << chocolateBars << std::endl;
 

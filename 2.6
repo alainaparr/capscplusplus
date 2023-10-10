@@ -13,13 +13,11 @@ int main() {
 
     int hoursWorked, dependents;
 
-    // Input: Number of hours worked and number of dependents
     std::cout << "Enter the number of hours worked in a week: ";
     std::cin >> hoursWorked;
     std::cout << "Enter the number of dependents: ";
     std::cin >> dependents;
 
-    // Calculate gross pay
     double grossPay;
     if (hoursWorked <= STANDARD_HOURS) {
         grossPay = hoursWorked * HOURLY_RATE;
@@ -27,17 +25,14 @@ int main() {
         grossPay = STANDARD_HOURS * HOURLY_RATE + (hoursWorked - STANDARD_HOURS) * OVERTIME_RATE;
     }
 
-    // Calculate withholding amounts
     double socialSecurityTax = grossPay * SOCIAL_SECURITY_TAX_RATE;
     double federalIncomeTax = grossPay * FEDERAL_INCOME_TAX_RATE;
     double stateIncomeTax = grossPay * STATE_INCOME_TAX_RATE;
     double unionDues = UNION_DUES;
     double healthInsurance = (dependents >= 3) ? HEALTH_INSURANCE_COST : 0.0;
 
-    // Calculate net take-home pay
     double netPay = grossPay - socialSecurityTax - federalIncomeTax - stateIncomeTax - unionDues - healthInsurance;
 
-    // Output the results
     std::cout << std::fixed << std::setprecision(2);
     std::cout << "Gross Pay: $" << grossPay << std::endl;
     std::cout << "Social Security Tax: $" << socialSecurityTax << std::endl;

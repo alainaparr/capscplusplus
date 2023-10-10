@@ -1,0 +1,30 @@
+#include <iostream>
+#include <iomanip>
+
+int main() {
+    int numExercises;
+    double totalPointsEarned = 0, totalPointsPossible = 0;
+    
+    std::cout << "How many exercises? ";
+    std::cin >> numExercises;
+    
+    for (int i = 1; i <= numExercises; ++i) {
+        double score, totalPoints;
+        std::cout << "Score received " << i << ": ";
+        std::cin >> score;
+        std::cout << "Total points possible " << i << ": ";
+        std::cin >> totalPoints;
+        
+        totalPointsEarned += score;
+        totalPointsPossible += totalPoints;
+    }
+
+    
+    double percentage = (totalPointsEarned / totalPointsPossible) * 100;
+
+    
+    std::cout << "Your total is " << totalPointsEarned << " out of " << totalPointsPossible << ", or "
+              << std::fixed << std::setprecision(2) << percentage << "%\n";
+
+    return 0;
+}

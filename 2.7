@@ -1,0 +1,27 @@
+#include <iostream>
+#include <cmath>
+
+int main() {
+    double initialCost, inflationRate, years;
+
+
+    std::cout << "Enter the cost of the item: $";
+    std::cin >> initialCost;
+    std::cout << "Enter the number of years from now the item will be purchased: ";
+    std::cin >> years;
+    std::cout << "Enter the rate of inflation (in percentage): ";
+    std::cin >> inflationRate;
+
+
+    inflationRate /= 100.0;
+
+
+    for (int i = 1; i <= years; ++i) {
+        initialCost *= (1 + inflationRate);
+    }
+
+
+    std::cout << "The estimated cost of the item after " << years << " years: $" << std::fixed << initialCost << std::endl;
+
+    return 0;
+}

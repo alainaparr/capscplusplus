@@ -1,0 +1,28 @@
+#include <iostream>
+
+int main() {
+    int number, positiveSum = 0, nonPositiveSum = 0, totalSum = 0;
+
+    std::cout << "Enter ten whole numbers: ";
+
+    
+    for (int i = 0; i < 10; ++i) {
+        std::cin >> number;
+        
+        if (number > 0) {
+            positiveSum += number;
+        }
+            
+        else {
+            nonPositiveSum += number;
+        }
+        
+        totalSum += number;
+    }
+    
+    std::cout << "Sum of positive numbers: " << positiveSum << std::endl;
+    std::cout << "Sum of non-positive numbers (including zero): " << nonPositiveSum << std::endl;
+    std::cout << "Total sum of all numbers: " << totalSum << std::endl;
+
+    return 0;
+}

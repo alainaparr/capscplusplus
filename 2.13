@@ -4,7 +4,7 @@
 int main() {
     char gender;
     double weight, height, age, bmr, chocolateBarCalories = 230;
-    int chocolateBars;
+    float chocolateBars;
     
     std::cout << "Enter your gender (M/F): ";
     std::cin >> gender;
@@ -24,7 +24,7 @@ int main() {
         return 1;
     }
     
-    chocolateBars = static_cast<int>(bmr / chocolateBarCalories);
+    chocolateBars = (bmr / chocolateBarCalories);
 
 
     

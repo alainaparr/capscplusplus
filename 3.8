@@ -1,0 +1,32 @@
+#include <iostream>
+#include <cmath>
+
+int main() {
+    char repeat;
+
+    do {
+        
+        int n;
+        std::cout << "Enter the number of terms (n) for the approximation of pi: ";
+        std::cin >> n;
+
+        
+        double pi_approx = 0.0;
+        for (int i = 0; i < n; ++i) {
+            pi_approx += (i % 2 == 0 ? 1.0 : -1.0) / (2 * i + 1);
+        }
+        pi_approx *= 4;
+
+        
+        std::cout << "Approximate value of pi with " << n << " terms: " << pi_approx << std::endl;
+
+        
+        std::cout << "Do you want to calculate again? (y/n): ";
+        std::cin >> repeat;
+
+    } while (repeat == 'y' || repeat == 'Y');
+
+    std::cout << "Program ended.\n";
+
+    return 0;
+}

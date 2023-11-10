@@ -1,0 +1,51 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+string arabicToRoman(int year) {
+    string result = "";
+
+    
+    int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char* symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+    
+    for (int i = 0; i < 13; i++) {
+        while (year >= values[i]) {
+            result += symbols[i];
+            year -= values[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    char repeat;
+
+    do {
+        
+        int year;
+        cout << "Enter a four-digit year between 1000 and 3000: ";
+        cin >> year;
+
+        
+        if (year >= 1000 && year <= 3000) {
+            
+            cout << "Roman numeral: " << arabicToRoman(year) << endl;
+        } else {
+            cout << "Invalid year. Please enter a year between 1000 and 3000." << endl;
+        }
+
+        
+        cout << "Do you want to convert another year? (y/n): ";
+        cin >> repeat;
+
+    } while (repeat == 'y' || repeat == 'Y');
+
+    cout << "Program ended. Goodbye!" << endl;
+
+    return 0;
+}

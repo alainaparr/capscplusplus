@@ -1,0 +1,82 @@
+#include <iostream>
+#include <limits>
+#include <cctype>
+#include <iomanip>
+#include <sstream>
+
+using namespace std;
+
+int main() {
+    char day;
+    string startTimeInput;
+    int callLength;
+    double rate, cost;
+
+    cout << "Long-Distance Call Calculator" << endl;
+
+    do {
+        cout << "\nEnter the day of the week (Mo, Tu, We, Th, Fr, Sa, Su): ";
+        cin >> day;
+
+
+        day = toupper(day);
+
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "Enter the time the call started (24-hour notation, e.g., 13:30): ";
+        getline(cin, startTimeInput);
+
+
+        stringstream ss(startTimeInput);
+        int hours;
+        char colon;
+        if (!(ss >> hours >> colon >> callLength) || colon != ':' || hours < 0 || hours > 23 || callLength < 0) {
+            cout << "Invalid input. Please enter a valid time (HH:MM): ";
+            continue;
+        }
+
+        cout << "Enter the length of the call in minutes: ";
+
+
+        while (!(cin >> callLength) || callLength < 0) {
+            cout << "Invalid input. Please enter a valid call length: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+
+        if ((day == 'M' || day == 'T' || day == 'W' || day == 'R' || day == 'F') &&
+            (hours >= 8 && hours <= 18)) {
+            rate = 0.40;
+        } else if ((day == 'M' || day == 'T' || day == 'W' || day == 'R' || day == 'F') &&
+                   (hours < 8 || hours > 18)) {
+            rate = 0.25;
+        } else {
+            rate = 0.15;
+        }
+
+
+        cost = rate * callLength;
+
+
+        cout << fixed << setprecision(2);
+        cout << "The cost of the call is: $" << cost << endl;
+
+
+        cout << "\nCalculate another call? (Y/N): ";
+        char repeat;
+        cin >> repeat;
+
+
+        repeat = toupper(repeat);
+
+        if (repeat != 'Y') {
+            cout << "Goodbye!" << endl;
+            break;
+        }
+
+    } while (true);
+
+    return 0;
+}

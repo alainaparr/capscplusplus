@@ -1,0 +1,63 @@
+#include <iostream>
+
+
+bool contains147(int num) {
+    while (num > 0) {
+        int digit = num % 10;
+        if (digit == 1 || digit == 4 || digit == 7) {
+            return true;
+        }
+        num /= 10;
+    }
+    return false;
+}
+
+
+int findNextSmallest(int num) {
+    while (contains147(num)) {
+        num--;
+    }
+    return num;
+}
+
+
+int findNextLargest(int num) {
+    while (contains147(num)) {
+        num++;
+    }
+    return num;
+}
+
+int main() {
+    char continueOption;
+
+    do {
+        
+        int desiredTemperature;
+        std::cout << "Enter desired temperature (0 to 999): ";
+        std::cin >> desiredTemperature;
+
+        
+        if (desiredTemperature < 0 || desiredTemperature > 999) {
+            std::cout << "Invalid input. Temperature must be between 0 and 999." << std::endl;
+            return 1;
+        }
+
+        
+        if (!contains147(desiredTemperature)) {
+            std::cout << "Desired temperature: " << desiredTemperature << std::endl;
+        } else {
+            
+            int nextSmallest = findNextSmallest(desiredTemperature - 1);
+            int nextLargest = findNextLargest(desiredTemperature + 1);
+
+            std::cout << "smallest temperature without 1, 4, or 7: " << nextSmallest << std::endl;
+            std::cout << "largest temperature without 1, 4, or 7: " << nextLargest << std::endl;
+        }
+
+        std::cout << "Check another temperature? (y/n): ";
+        std::cin >> continueOption;
+    } while (continueOption == 'y' || continueOption == 'Y');
+
+    return 0;
+}

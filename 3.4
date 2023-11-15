@@ -1,76 +1,66 @@
 #include <iostream>
 #include <cctype>
+#include <string>
 
 int main() {
-    char card[3];  
+    char input;
     int numCards;
-    int score = 0;
-    char repeat; 
 
     do {
-        
-        score = 0;
+        int totalScore = 0;
+        int numAces = 0;
 
-        
-        std::cout << "Enter the number of cards (2-5): ";
+        std::cout << "How many cards do you have (2-5)? ";
         std::cin >> numCards;
 
-        
         for (int i = 0; i < numCards; ++i) {
-            
-            while (true) {
-                std::cout << "Enter card value (2-10, T, J, Q, K, A): ";
-                std::cin >> card;
+            std::cout << "Enter card value (2-10, T, J, Q, K, A) #" << i + 1 << ": ";
+            std::string cardValue;
+            std::cin >> cardValue;
 
-                
-                if (std::isdigit(card[0]) && (card[1] == '\0' || card[1] == '0')) {
-                    
-                    score += 10;
-                    break; 
+            // Convert card letters to numbers
+            int cardScore;
+            if (cardValue == "10") {
+                cardScore = 10;
+            } else if (cardValue.size() == 1) {
+                char singleChar = cardValue[0];
+                if (singleChar >= '2' && singleChar <= '9') {
+                    cardScore = singleChar - '0';
+                } else if (singleChar == 'T' || singleChar == 't' || singleChar == 'J' || singleChar == 'j' ||
+                           singleChar == 'Q' || singleChar == 'q' || singleChar == 'K' || singleChar == 'k') {
+                    cardScore = 10;
+                } else if (singleChar == 'A' || singleChar == 'a') {
+                    ++numAces;
+                    cardScore = 11; 
                 } else {
-                    switch (toupper(card[0])) {
-                        case '2': case '3': case '4': case '5': case '6':
-                        case '7': case '8': case '9':
-                            score += (card[0] - '0');
-                            break;
-                        case 'T': case 'J': case 'Q': case 'K':
-                            score += 10;
-                            break;
-                        case 'A':
-                            
-                            if (score + 11 <= 21) {
-                                score += 11;
-                            } else {
-                                score += 1;
-                            }
-                            break;
-                        default:
-                            std::cout << "Invalid card, try again." << std::endl;
-                            continue; 
-                    }
-                    break; 
+                    std::cout << "Invalid card value. Please enter a valid card value.\n";
+                    --i;
+                    continue;
                 }
+            } else {
+                std::cout << "Invalid card value. Please enter a valid card value.\n";
+                --i;
+                continue;
             }
+
+            totalScore += cardScore;
         }
 
         
-        std::cout << "Score: " << score << std::endl;
-        if (score > 21) {
-            std::cout << "Busted!" << std::endl;
+        while (numAces > 0 && totalScore > 21) {
+            totalScore -= 10; // Change ace from 11 to 1
+            --numAces;
         }
 
-        
-        std::cout << "Do you want to enter another hand? (y/n): ";
-        std::cin >> repeat;
+        std::cout << "Total Score: " << totalScore << "\n";
+        if (totalScore > 21) {
+            std::cout << "Busted!\n";
+        }
 
-    } while (toupper(repeat) == 'Y');
+        std::cout << "Do you want to calculate again? (y/n): ";
+        std::cin >> input;
 
-    std::cout << "Goodbye!" << std::endl;
+    } while (std::toupper(input) == 'Y');
 
     return 0;
 }
-
-
-
-
-// fix ace problem when it goes first

@@ -1,0 +1,52 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+
+double calculateBMR(double weight) {
+    return 70 * pow((weight / 2.2), 0.756);
+}
+
+
+double calculatePhysicalActivityCalories(double intensity, double weight, double minutes) {
+    return 0.0385 * intensity * weight * minutes;
+}
+
+
+double calculateDigestionCalories(double totalCaloriesConsumed) {
+    return totalCaloriesConsumed * 0.1;
+}
+
+int main() {
+
+    double weight, intensity, minutes, totalCaloriesConsumed;
+
+
+    cout << "Enter weight in pounds: ";
+    cin >> weight;
+
+    cout << "Enter intensity of physical activity: ";
+    cin >> intensity;
+
+    cout << "Enter minutes spent exercising: ";
+    cin >> minutes;
+
+    cout << "Enter total calories consumed per day: ";
+    cin >> totalCaloriesConsumed;
+
+
+    double totalCaloriesRequired = calculateBMR(weight) +
+                                   calculatePhysicalActivityCalories(intensity, weight, minutes) +
+                                   calculateDigestionCalories(totalCaloriesConsumed);
+
+
+    double caloriesPerServing = 1000; // Example: Double cheeseburger has approximately 1000 calories
+    int servingsPerDay = static_cast<int>(totalCaloriesRequired / caloriesPerServing);
+
+
+    cout << "To maintain your current weight, you should eat approximately " << servingsPerDay
+         << " 1000 calorie cheeseburgers." << endl;
+
+    return 0;
+}

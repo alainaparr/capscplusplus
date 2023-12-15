@@ -8,15 +8,18 @@ int computeDifference(int startHours, int startMinutes, bool isStartAM, int futu
     int futureTotalMinutes = (futureHours % 12 + (isFutureAM ? 0 : 12)) * 60 + futureMinutes;
 
     int difference = futureTotalMinutes - startTotalMinutes;
+
+    // Check if the future time is earlier than the start time
     if (difference < 0) {
-        difference += 12 * 60;  
+        difference += 24 * 60;  // Add 24 hours (1440 minutes) for a new day
     }
-// if am = am then add
+
     return difference;
 }
 
+
 int main() {
-    
+
     int startHours, startMinutes, futureHours, futureMinutes;
     char startAMPM, futureAMPM;
     std::string startTime, futureTime;
@@ -24,26 +27,26 @@ int main() {
     std::cout << "Enter start time (hours minutes AM/PM): ";
     std::getline(std::cin, startTime);
 
-    
+
     std::istringstream startStream(startTime);
     startStream >> startHours >> startMinutes >> startAMPM;
 
-    
+
     std::cout << "Enter future time (hours minutes AM/PM): ";
     std::getline(std::cin, futureTime);
 
-    
+
     std::istringstream futureStream(futureTime);
     futureStream >> futureHours >> futureMinutes >> futureAMPM;
 
-    
+
     bool isStartAM = (startAMPM == 'A' || startAMPM == 'a');
     bool isFutureAM = (futureAMPM == 'A' || futureAMPM == 'a');
 
-    
+
     int difference = computeDifference(startHours, startMinutes, isStartAM, futureHours, futureMinutes, isFutureAM);
 
-    
+
     std::cout << "Time difference: " << difference << " minutes" << std::endl;
 
     return 0;

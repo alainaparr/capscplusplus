@@ -1,0 +1,54 @@
+#include <iostream>
+#include <iomanip>
+
+
+void displayWelcome() {
+    std::cout << "Welcome to the Deep-Fried Twinkie Vending Machine!" << std::endl;
+    std::cout << "Each deep-fried Twinkie costs $3.50." << std::endl;
+}
+
+
+double insertCoin(double totalAmount) {
+    double coin;
+
+    do {
+        std::cout << "Insert a coin ($1.00, $0.25, $0.10, $0.05): ";
+        std::cin >> coin;
+
+        
+        if (coin == 1.00 || coin == 0.25 || coin == 0.10 || coin == 0.05) {
+            totalAmount += coin;
+            std::cout << "Total amount: $" << std::fixed << std::setprecision(2) << totalAmount << std::endl;
+        } else {
+            std::cout << "Invalid coin. Please insert a valid coin." << std::endl;
+        }
+
+    } while (totalAmount < 3.50); 
+
+    return totalAmount;
+}
+
+
+void dispenseTwinkie(double totalAmount) {
+    double change = totalAmount - 3.50;
+
+    std::cout << "Enjoy your deep-fried Twinkie!" << std::endl;
+
+    if (change > 0) {
+        std::cout << "Change: $" << std::fixed << std::setprecision(2) << change << std::endl;
+    }
+}
+
+int main() {
+    double totalAmount = 0.0;
+
+    displayWelcome();
+
+    
+    totalAmount = insertCoin(totalAmount);
+
+    
+    dispenseTwinkie(totalAmount);
+
+    return 0;
+}

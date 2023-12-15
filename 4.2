@@ -1,0 +1,51 @@
+#include <iostream>
+using namespace std;
+
+// hat size
+double calculateHatSize(double weight, double height) {
+    return (weight / height) * 2.9;
+}
+
+// jacket size
+double calculateJacketSize(double height, double weight, int age) {
+    double baseSize = (height * weight) / 288.0;
+    double adjustment = (age > 30) ? ((age - 30) / 10) * 0.125 : 0.0;
+    return baseSize + adjustment;
+}
+
+// waist size
+double calculateWaistSize(double weight, int age) {
+    double baseSize = weight / 5.7;
+    double adjustment = (age > 28) ? ((age - 28) / 2) * 0.1 : 0.0;
+    return baseSize + adjustment;
+}
+
+int main() {
+    char repeat;
+
+    do {
+        double height, weight;
+        int age;
+
+
+        cout << "Enter your height in inches: ";
+        cin >> height;
+        cout << "Enter your weight in pounds: ";
+        cin >> weight;
+        cout << "Enter your age: ";
+        cin >> age;
+
+
+        cout << "\nClothing Sizes:\n";
+        cout << "Hat Size: " << calculateHatSize(weight, height) << endl;
+        cout << "Jacket Size: " << calculateJacketSize(height, weight, age) << " inches\n";
+        cout << "Waist Size: " << calculateWaistSize(weight, age) << " inches\n";
+
+        
+        cout << "\nDo you want to calculate again? (Y/N): ";
+        cin >> repeat;
+
+    } while (repeat == 'Y' || repeat == 'y');
+
+    return 0;
+}

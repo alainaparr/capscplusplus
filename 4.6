@@ -1,33 +1,42 @@
 #include <iostream>
 #include <iomanip>
-
+#include <string>
 
 void displayWelcome() {
-    std::cout << "Welcome to the Deep-Fried Twinkie Vending Machine!" << std::endl;
+    
     std::cout << "Each deep-fried Twinkie costs $3.50." << std::endl;
 }
 
-
 double insertCoin(double totalAmount) {
-    double coin;
+    std::string coinType;
 
     do {
-        std::cout << "Insert a coin ($1.00, $0.25, $0.10, $0.05): ";
-        std::cin >> coin;
+        std::cout << "Insert a coin (dollar, quarter, dime, nickel): ";
+        std::cin >> coinType;
 
-        
-        if (coin == 1.00 || coin == 0.25 || coin == 0.10 || coin == 0.05) {
-            totalAmount += coin;
+        if (coinType == "dollar" || coinType == "quarter" || coinType == "dime" || coinType == "nickel") {
+            double coinValue = 0.0;
+
+            if (coinType == "dollar") {
+                coinValue = 1.00;
+            } else if (coinType == "quarter") {
+                coinValue = 0.25;
+            } else if (coinType == "dime") {
+                coinValue = 0.10;
+            } else if (coinType == "nickel") {
+                coinValue = 0.05;
+            }
+
+            totalAmount += coinValue;
             std::cout << "Total amount: $" << std::fixed << std::setprecision(2) << totalAmount << std::endl;
         } else {
             std::cout << "Invalid coin. Please insert a valid coin." << std::endl;
         }
 
-    } while (totalAmount < 3.50); 
+    } while (totalAmount < 3.50);
 
     return totalAmount;
 }
-
 
 void dispenseTwinkie(double totalAmount) {
     double change = totalAmount - 3.50;
@@ -44,10 +53,8 @@ int main() {
 
     displayWelcome();
 
-    
     totalAmount = insertCoin(totalAmount);
 
-    
     dispenseTwinkie(totalAmount);
 
     return 0;

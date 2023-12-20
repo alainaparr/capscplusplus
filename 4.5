@@ -16,33 +16,38 @@ double calculateDigestionCalories(double totalCaloriesConsumed) {
 }
 
 int main() {
-    double weight, intensity, minutes, totalCaloriesConsumed;
+    char continueProgram = 'y';
 
-    cout << "Enter weight in pounds: ";
-    cin >> weight;
+    while (continueProgram == 'y' || continueProgram == 'Y') {
+        double weight, intensity, minutes, caloriesPerServing;
 
-    cout << "Enter intensity of physical activity: ";
-    cin >> intensity;
+        cout << "Enter weight in pounds: ";
+        cin >> weight;
 
-    cout << "Enter minutes spent exercising: ";
-    cin >> minutes;
+        cout << "Enter intensity of physical activity: ";
+        cin >> intensity;
 
-    cout << "Enter total calories consumed per day: ";
-    cin >> totalCaloriesConsumed;
+        cout << "Enter minutes spent exercising: ";
+        cin >> minutes;
 
-    double totalCaloriesRequired = calculateBMR(weight) +
-                                   calculatePhysicalActivityCalories(intensity, weight, minutes) +
-                                   calculateDigestionCalories(totalCaloriesConsumed);
+        cout << "Enter the calories per serving of your favorite food: ";
+        cin >> caloriesPerServing;
 
-    double caloriesPerServing;
+        double totalCaloriesRequired = calculateBMR(weight) +
+                                       calculatePhysicalActivityCalories(intensity, weight, minutes) +
+                                       calculateDigestionCalories(caloriesPerServing);
 
-    cout << "Enter the calories per serving of your favorite food: ";
-    cin >> caloriesPerServing;
+        int servingsPerDay = static_cast<int>(totalCaloriesRequired / caloriesPerServing);
+        double totalCalories = servingsPerDay * caloriesPerServing;
 
-    int servingsPerDay = static_cast<int>(totalCaloriesRequired / caloriesPerServing);
+        cout << "To maintain your current weight, you should eat approximately " << servingsPerDay
+             << " servings of your favorite food, totaling " << totalCalories << " calories." << endl;
 
-    cout << "To maintain your current weight, you should eat approximately " << servingsPerDay
-         << " servings of your favorite food." << endl;
+        cout << "Do you want to calculate again? (y/n): ";
+        cin >> continueProgram;
+    }
+
+    cout << "Goodbye!" << endl;
 
     return 0;
 }

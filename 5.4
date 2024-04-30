@@ -1,0 +1,36 @@
+#include <iostream>
+
+void compute_coins(int coin_value, int& num, int& amount_left) {
+    num = amount_left / coin_value;
+    amount_left %= coin_value;
+}
+
+int main() {
+    int amount_left;
+    char choice;
+
+    do {
+        std::cout << "Enter the amount of change (1 to 99 cents): ";
+        std::cin >> amount_left;
+
+        if (amount_left < 1 || amount_left > 99) {
+            std::cout << "Invalid input. Please enter a number between 1 and 99." << std::endl;
+            continue;
+        }
+
+        int quarters, dimes, pennies;
+        compute_coins(25, quarters, amount_left);
+        compute_coins(10, dimes, amount_left);
+        pennies = amount_left;
+
+        std::cout << amount_left << " cents can be given as" << std::endl;
+        std::cout << quarters << " quarter(s), ";
+        std::cout << dimes << " dime(s), and ";
+        std::cout << pennies << " penny(pennies)" << std::endl;
+
+        std::cout << "Do you want to compute change for another amount? (y/n): ";
+        std::cin >> choice;
+    } while (choice == 'y' || choice == 'Y');
+
+    return 0;
+}

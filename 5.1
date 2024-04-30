@@ -1,0 +1,46 @@
+#include <iostream>
+using namespace std;
+
+void getInput(int& hour, int& minute);
+void convertTo12Hour(int& hour, int& minute, char& am_pm);
+void displayOutput(int hour, int minute, char am_pm);
+
+int main() {
+    char choice;
+    do {
+        int hour, minute;
+        char am_pm;
+
+        getInput(hour, minute);
+        convertTo12Hour(hour, minute, am_pm);
+        displayOutput(hour, minute, am_pm);
+
+        cout << "Do you want to convert another time? (y/n): ";
+        cin >> choice;
+    } while (choice == 'y' || choice == 'Y');
+
+    cout << "Program ended." << endl;
+    return 0;
+}
+
+void getInput(int& hour, int& minute) {
+    char colon;
+    cout << "Enter the time in 24-hour notation (hour:minute): ";
+    cin >> hour >> colon >> minute;
+}
+
+void convertTo12Hour(int& hour, int& minute, char& am_pm) {
+    if (hour >= 0 && hour <= 11) {
+        am_pm = 'A';
+        if (hour == 0)
+            hour = 12; // 0 hour is 12 AM
+    } else {
+        am_pm = 'P';
+        if (hour > 12)
+            hour -= 12;
+    }
+}
+
+void displayOutput(int hour, int minute, char am_pm) {
+    cout << "Converted time: " << hour << ":" << (minute < 10 ? "0" : "") << minute << " " << am_pm << "M" << endl;
+}

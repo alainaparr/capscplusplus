@@ -1,0 +1,35 @@
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int currentHour, currentMinute;
+    char choice;
+
+    do {
+        // Request current time
+        cout << "Enter the current time (HH MM): ";
+        cin >> currentHour >> currentMinute;
+
+        // Request waiting time
+        int waitingHour, waitingMinute;
+        cout << "Enter the waiting time (hours minutes): ";
+        cin >> waitingHour >> waitingMinute;
+
+        // Calculate new time
+        int newHour = currentHour + waitingHour + (currentMinute + waitingMinute) / 60;
+        int newMinute = (currentMinute + waitingMinute) % 60;
+
+        // Adjust for overflow
+        newHour %= 24;
+
+        // Output new time
+        cout << "The time after waiting will be: " << newHour << ":" << (newMinute < 10 ? "0" : "") << newMinute << endl;
+
+        // Ask if user wants to repeat
+        cout << "Do you want to perform another calculation? (Y/N): ";
+        cin >> choice;
+    } while (choice == 'Y' || choice == 'y');
+
+    return 0;
+}

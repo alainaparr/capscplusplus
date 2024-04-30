@@ -1,0 +1,63 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+int main() {
+    int currentHour, currentMinute;
+    string period;
+    char choice;
+
+    do {
+        // Request current time
+        cout << "Enter the current time (HH MM AM/PM): ";
+        cin >> currentHour >> currentMinute >> period;
+
+        // Convert to 24-hour format
+        if (period == "PM" || period == "pm") {
+            currentHour = (currentHour == 12) ? 12 : currentHour + 12;
+        } else if (period == "AM" || period == "am") {
+            currentHour = (currentHour == 12) ? 0 : currentHour;
+        } else {
+            cout << "Invalid time period entered. Please enter AM or PM." << endl;
+            continue;
+        }
+
+        // Request waiting time
+        int waitingHour, waitingMinute;
+        cout << "Enter the waiting time (hours minutes): ";
+        cin >> waitingHour >> waitingMinute;
+
+        // Calculate total minutes
+        int totalCurrentMinutes = currentHour * 60 + currentMinute;
+        int totalWaitingMinutes = waitingHour * 60 + waitingMinute;
+
+        // Calculate new total minutes
+        int newTotalMinutes = (totalCurrentMinutes + totalWaitingMinutes) % (24 * 60);
+
+        // Calculate new hour and minute
+        int newHour = newTotalMinutes / 60;
+        int newMinute = newTotalMinutes % 60;
+
+        // Determine AM or PM
+        string newPeriod = (newTotalMinutes < 12 * 60) ? "AM" : "PM";
+
+        // Convert to 12-hour format
+        if (newHour > 12) {
+            newHour -= 12;
+            newPeriod = "PM";
+        } else if (newHour == 0) {
+            newHour = 12;
+        }
+
+        // Output new time
+        cout << "The time after waiting will be: " << newHour << ":" << (newMinute < 10 ? "0" : "") << newMinute << " " << newPeriod << endl;
+
+        // Ask if user wants to repeat
+        cout << "Do you want to perform another calculation? (Y/N): ";
+        cin >> choice;
+    } while (choice == 'Y' || choice == 'y');
+
+    return 0;
+}

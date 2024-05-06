@@ -1,0 +1,85 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+
+using namespace std;
+
+vector<string> words = {"apple", "banana", "orange", "grape", "kiwi", "strawberry", "watermelon"};
+const int MAX_WRONG_GUESSES = 7;
+
+string chooseRandomWord() {
+    srand(static_cast<unsigned int>(time(0)));
+    int randomIndex = rand() % words.size();
+    return words[randomIndex];
+}
+
+bool contains(const string& word, char guess) {
+    return word.find(guess) != string::npos;
+}
+
+void displayWord(const string& word, const string& guessedLetters) {
+    for (char letter : word) {
+        if (guessedLetters.find(letter) != string::npos) {
+            cout << letter << " ";
+        } else {
+            cout << "_ ";
+        }
+    }
+    cout << endl;
+}
+
+char getGuess() {
+    char guess;
+    cout << "Enter your guess: ";
+    cin >> guess;
+    return tolower(guess);
+}
+
+void playHangman() {
+    string word = chooseRandomWord();
+    string guessedLetters;
+    int wrongGuesses = 0;
+
+    while (wrongGuesses < MAX_WRONG_GUESSES) {
+        cout << "Guessed letters: " << guessedLetters << endl;
+        displayWord(word, guessedLetters);
+
+        char guess = getGuess();
+
+        if (contains(word, guess)) {
+            cout << "Correct guess!" << endl;
+            guessedLetters += guess;
+        } else {
+            cout << "Incorrect guess!" << endl;
+            wrongGuesses++;
+        }
+
+        bool foundAllLetters = true;
+        for (char letter : word) {
+            if (guessedLetters.find(letter) == string::npos) {
+                foundAllLetters = false;
+                break;
+            }
+        }
+
+        if (foundAllLetters) {
+            cout << "Congratulations! You guessed the word: " << word << endl;
+            return;
+        }
+    }
+
+    cout << "Sorry, you ran out of guesses. The word was: " << word << endl;
+}
+
+int main() {
+    char playAgain;
+    do {
+        playHangman();
+        cout << "Do you want to play again? (y/n): ";
+        cin >> playAgain;
+    } while (tolower(playAgain) == 'y');
+
+    return 0;
+}

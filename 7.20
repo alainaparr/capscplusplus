@@ -1,0 +1,68 @@
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+const int MAX_AGE = 120;
+
+void readData(double maleProb[], double femaleProb[]) {
+    ifstream inputFile("LifeDeathProbability.txt");
+    if (!inputFile.is_open()) {
+        cerr << "Error: Unable to open file." << endl;
+        exit(1);
+    }
+
+    int age;
+    double male, female;
+    while (inputFile >> age >> male >> female) {
+        maleProb[age] = male;
+        femaleProb[age] = female;
+    }
+
+    inputFile.close();
+}
+
+int simulateLife(double prob[]) {
+    srand(time(NULL)); // Seed the random number generator
+
+    int age = 0;
+    while (age < MAX_AGE) {
+        double random = (double)rand() / RAND_MAX; // Generate random number between 0 and 1
+
+        if (random <= prob[age]) {
+            return age; // Predicts that the user will live to this age
+        }
+        age++;
+    }
+
+    return MAX_AGE; // User reaches the maximum age
+}
+
+int main() {
+    double maleProb[MAX_AGE], femaleProb[MAX_AGE];
+    readData(maleProb, femaleProb);
+
+    char sex;
+    cout << "Enter your sex (M/F): ";
+    cin >> sex;
+
+    int age;
+    cout << "Enter your age: ";
+    cin >> age;
+
+    int predictedAge;
+    if (sex == 'M' || sex == 'm') {
+        predictedAge = simulateLife(maleProb + age);
+    } else if (sex == 'F' || sex == 'f') {
+        predictedAge = simulateLife(femaleProb + age);
+    } else {
+        cerr << "Error: Invalid input for sex." << endl;
+        return 1;
+    }
+
+    cout << "Based on the simulation, you will likely live to age " << predictedAge << "." << endl;
+
+    return 0;
+}

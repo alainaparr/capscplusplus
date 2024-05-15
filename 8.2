@@ -1,0 +1,43 @@
+#include <iostream>
+#include <map>
+#include <cctype>
+
+using namespace std;
+
+int main() {
+    string line;
+    cout << "Enter a line of text: ";
+    getline(cin, line);
+
+    // Counting words
+    int wordCount = 0;
+    bool inWord = false;
+    for (char c : line) {
+        if (isalpha(c)) {
+            if (!inWord) {
+                wordCount++;
+                inWord = true;
+            }
+        } else {
+            inWord = false;
+        }
+    }
+
+    cout << wordCount << " words" << endl;
+
+    // Counting occurrences of each letter
+    map<char, int> letterCount;
+    for (char c : line) {
+        if (isalpha(c)) {
+            char lowerC = tolower(c);
+            letterCount[lowerC]++;
+        }
+    }
+
+    // Outputting the letter count
+    for (auto it = letterCount.begin(); it != letterCount.end(); ++it) {
+        cout << it->second << " " << it->first << endl;
+    }
+
+    return 0;
+}

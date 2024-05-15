@@ -1,0 +1,66 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cctype>
+
+using namespace std;
+
+bool isDelimiter(char c) {
+    return isspace(c) || c == ',' || c == '.' || c == '\n';
+}
+
+double computeAverageWordLength(istream& inputStream) {
+    double totalLength = 0;
+    int totalWords = 0;
+    string word;
+
+    while (inputStream >> word) {
+        // Strip punctuation marks from the word
+        int start = 0;
+        int end = word.length() - 1;
+
+        while (start <= end && isDelimiter(word[start])) {
+            start++;
+        }
+
+        while (end >= start && isDelimiter(word[end])) {
+            end--;
+        }
+
+        totalLength += (end - start + 1);
+        totalWords++;
+    }
+
+    if (totalWords == 0) {
+        return 0;
+    } else {
+        return totalLength / totalWords;
+    }
+}
+
+int main() {
+    string fileName;
+    char choice;
+
+    do {
+        cout << "Enter the file name: ";
+        cin >> fileName;
+
+        ifstream fileStream(fileName);
+        
+        if (!fileStream.is_open()) {
+            cerr << "Error: Unable to open file." << endl;
+            continue;
+        }
+
+        double averageLength = computeAverageWordLength(fileStream);
+        cout << "Average word length: " << averageLength << endl;
+
+        fileStream.close();
+
+        cout << "Do you want to analyze another file? (y/n): ";
+        cin >> choice;
+    } while (tolower(choice) == 'y');
+
+    return 0;
+}

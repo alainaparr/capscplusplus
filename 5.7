@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
-#include <cctype>
-#include <limits>
+using namespace std;
 
 bool isLeapYear(int year) {
     return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
@@ -19,96 +18,44 @@ int getYearValue(int year) {
 }
 
 int getMonthValue(int month, int year) {
-    switch (month) {
-        case 1:  // January
-            return isLeapYear(year) ? 6 : 0;
-        case 2:  // February
-            return isLeapYear(year) ? 2 : 3;
-        case 3:  // March
-            return 3;
-        case 4:  // April
-            return 6;
-        case 5:  // May
-            return 1;
-        case 6:  // June
-            return 4;
-        case 7:  // July
-            return 6;
-        case 8:  // August
-            return 2;
-        case 9:  // September
-            return 5;
-        case 10: // October
-            return 0;
-        case 11: // November
-            return 3;
-        case 12: // December
-            return 5;
-        default:
-            return -1; // Invalid month
+    int monthValues[] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
+    if (month == 1 || month == 2) {
+        if (isLeapYear(year))
+            return monthValues[month - 1] + 6;
+        else
+            return monthValues[month - 1];
+    } else {
+        return monthValues[month - 1];
     }
-}
-
-int getDayOfWeek(int day, int month, int year) {
-    int dayOfWeek = day + getMonthValue(month, year) + getYearValue(year) + getCenturyValue(year);
-    return dayOfWeek % 7;
 }
 
 void getInput(int &month, int &day, int &year) {
-    std::string monthName;
-    std::cout << "Enter the date (e.g., January 1, 2000): ";
-    std::cin >> monthName >> day >> year;
+    string monthName;
+    cout << "Enter the date (e.g., July 4, 2008): ";
+    cin >> monthName >> day >> year;
 
-    for (char &c : monthName) {
-        c = std::tolower(c);
+    string months[] = {"January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November", "December"};
+
+    for (int i = 0; i < 12; ++i) {
+        if (monthName == months[i]) {
+            month = i + 1;
+            return;
+        }
     }
 
-    if (monthName == "january") {
-        month = 1;
-    } else if (monthName == "february") {
-        month = 2;
-    } else if (monthName == "march") {
-        month = 3;
-    } else if (monthName == "april") {
-        month = 4;
-    } else if (monthName == "may") {
-        month = 5;
-    } else if (monthName == "june") {
-        month = 6;
-    } else if (monthName == "july") {
-        month = 7;
-    } else if (monthName == "august") {
-        month = 8;
-    } else if (monthName == "september") {
-        month = 9;
-    } else if (monthName == "october") {
-        month = 10;
-    } else if (monthName == "november") {
-        month = 11;
-    } else if (monthName == "december") {
-        month = 12;
-    } else {
-        std::cerr << "Invalid month name." << std::endl;
-        exit(1);
-    }
+    // If the input is not a month name, assume it's an integer representing the month.
+    month = stoi(monthName);
 }
 
 int main() {
-    bool continueLoop = true;
-    while (continueLoop) {
-        int month, day, year;
-        getInput(month, day, year);
-        int dayOfWeek = getDayOfWeek(day, month, year);
-        std::string daysOfWeek[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-        std::cout << "The day of the week is: " << daysOfWeek[dayOfWeek] << std::endl;
+    int month, day, year;
+    getInput(month, day, year);
 
-        // Ask if the user wants to input another date
-        std::cout << "Do you want to enter another date? (yes/no): ";
-        std::string choice;
-        std::cin >> choice;
-        if (choice != "yes") {
-            continueLoop = false;
-        }
-    }
+    int dayOfWeek = (day + getMonthValue(month, year) + getYearValue(year) + getCenturyValue(year)) % 7;
+
+    string daysOfWeek[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    cout << "The day of the week is: " << daysOfWeek[dayOfWeek] << endl;
+
     return 0;
 }

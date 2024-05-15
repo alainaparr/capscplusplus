@@ -1,0 +1,63 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <limits> // for numeric_limits
+
+using namespace std;
+
+void generateJunkMail(const string& inputFileName, const string& outputFileName, const string& firstName, const string& lastName) {
+    ifstream inputFile(inputFileName);
+    ofstream outputFile(outputFileName);
+
+    if (!inputFile) {
+        cerr << "Error: Unable to open input file: " << inputFileName << endl;
+        return;
+    }
+
+    if (!outputFile) {
+        cerr << "Error: Unable to open output file: " << outputFileName << endl;
+        return;
+    }
+
+    string line;
+    while (getline(inputFile, line)) {
+        size_t pos = line.find("#N#");
+        while (pos != string::npos) {
+            line.replace(pos, 3, firstName + " " + lastName);
+            pos = line.find("#N#", pos + 1);
+        }
+        outputFile << line << endl;
+    }
+
+    cout << "Junk mail successfully generated and saved to " << outputFileName << endl;
+
+    inputFile.close();
+    outputFile.close();
+}
+
+int main() {
+    string inputFileName, outputFileName, firstName, lastName;
+    char choice;
+
+    do {
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
+        cout << "Enter input file name: ";
+        getline(cin, inputFileName);
+
+        cout << "Enter output file name: ";
+        getline(cin, outputFileName);
+
+        cout << "Enter first name: ";
+        getline(cin, firstName);
+
+        cout << "Enter last name: ";
+        getline(cin, lastName);
+
+        generateJunkMail(inputFileName, outputFileName, firstName, lastName);
+
+        cout << "Do you want to generate another junk mail? (y/n): ";
+        cin >> choice;
+    } while (choice == 'y' || choice == 'Y');
+
+    return 0;
+}

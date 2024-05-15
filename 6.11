@@ -1,0 +1,41 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+void generateSVG(int value1, int value2, int value3, int value4) {
+    ofstream svgFile("barchart.svg");
+
+    // SVG boilerplate
+    svgFile << "<?xml version=\"1.0\" standalone=\"no\"?>" << endl;
+    svgFile << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" << endl;
+    svgFile << "<svg width=\"600\" height=\"500\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
+
+    // Calculate scaling factor
+    int maxValue = max(max(max(value1, value2), value3), value4);
+    double scaleFactor = 400.0 / maxValue;
+
+    // Draw rectangles
+    svgFile << "<rect x=\"50\" y=\"" << 400 - value1 * scaleFactor << "\" width=\"100\" height=\"" << value1 * scaleFactor << "\" style=\"fill:blue;\"/>" << endl;
+    svgFile << "<rect x=\"200\" y=\"" << 400 - value2 * scaleFactor << "\" width=\"100\" height=\"" << value2 * scaleFactor << "\" style=\"fill:blue;\"/>" << endl;
+    svgFile << "<rect x=\"350\" y=\"" << 400 - value3 * scaleFactor << "\" width=\"100\" height=\"" << value3 * scaleFactor << "\" style=\"fill:blue;\"/>" << endl;
+    svgFile << "<rect x=\"500\" y=\"" << 400 - value4 * scaleFactor << "\" width=\"100\" height=\"" << value4 * scaleFactor << "\" style=\"fill:blue;\"/>" << endl;
+
+    // Closing SVG tag
+    svgFile << "</svg>" << endl;
+
+    svgFile.close();
+
+    cout << "SVG file generated successfully: barchart.svg" << endl;
+}
+
+int main() {
+    int value1, value2, value3, value4;
+
+    cout << "Enter four non-negative integer values: ";
+    cin >> value1 >> value2 >> value3 >> value4;
+
+    generateSVG(value1, value2, value3, value4);
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <iostream>
+#include <cctype>
+
+using namespace std;
+
+int main() {
+    char sentence[101]; // Assuming maximum length of sentence is 100 characters
+    char corrected_sentence[101] = {'\0'}; // Initialize to empty string
+
+    // Input the sentence
+    cout << "Enter a sentence: ";
+    cin.getline(sentence, 101);
+
+    // Variables to keep track of processing
+    int len = 0; // Length of the sentence
+    bool prev_char_was_space = false; // To handle multiple spaces
+
+    // Process each character of the sentence
+    for (int i = 0; sentence[i] != '\0'; ++i) {
+        char current_char = sentence[i];
+
+        // If it's not a space or newline, make it lowercase
+        if (!isspace(current_char)) {
+            current_char = tolower(current_char);
+        }
+
+        // If it's the first character or the previous character was a space or newline, make it uppercase
+        if (i == 0 || prev_char_was_space) {
+            current_char = toupper(current_char);
+        }
+
+        // If it's not a newline, add it to the corrected sentence
+        if (current_char != '\n') {
+            // If it's not a space or the previous character wasn't a space, add it to the corrected sentence
+            if (!isspace(current_char) || !prev_char_was_space) {
+                corrected_sentence[len++] = current_char;
+            }
+        }
+
+        // Update prev_char_was_space
+        prev_char_was_space = isspace(sentence[i]);
+    }
+
+    // Add period at the end
+    corrected_sentence[len++] = '.';
+
+    // Output the corrected sentence
+    cout << "Corrected sentence: " << corrected_sentence << endl;
+
+    return 0;
+}

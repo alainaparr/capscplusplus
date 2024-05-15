@@ -1,0 +1,43 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+int main() {
+    // Store the actual PIN number
+    int actualPIN = 12345;
+
+    // Seed the random number generator
+    srand(time(0));
+
+    // Define an array to assign random numbers to digits from 0 to 9
+    int randomNumbers[10];
+
+    // Assign random numbers (1, 2, or 3) to each digit from 0 to 9
+    for (int i = 0; i < 10; ++i) {
+        randomNumbers[i] = rand() % 3 + 1;
+    }
+
+    // Output the random digits to the screen
+    cout << "PIN:    0 1 2 3 4 5 6 7 8 9" << endl;
+    cout << "NUM:    ";
+    for (int i = 0; i < 10; ++i) {
+        cout << randomNumbers[i] << " ";
+    }
+    cout << endl;
+
+    // Input the response from the user
+    int userResponse;
+    cout << "Enter your response: ";
+    cin >> userResponse;
+
+    // Check if the user's response correctly matches the PIN number
+    if (userResponse == actualPIN) {
+        cout << "Authentication successful!" << endl;
+    } else {
+        cout << "Authentication failed!" << endl;
+    }
+
+    return 0;
+}

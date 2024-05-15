@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-using namespace std;
+#include <cctype>
 
 bool isLeapYear(int year) {
     return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
@@ -18,34 +18,61 @@ int getYearValue(int year) {
 }
 
 int getMonthValue(int month, int year) {
-    int monthValues[] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
-    if (month == 1 || month == 2) {
-        if (isLeapYear(year))
-            return monthValues[month - 1] + 6;
-        else
-            return monthValues[month - 1];
-    } else {
-        return monthValues[month - 1];
+    switch (month) {
+        case 1: // January
+            return isLeapYear(year) ? 6 : 0;
+        case 2: // February
+            return isLeapYear(year) ? 2 : 3;
+        case 3: // March
+            return 3;
+        case 4: // April
+            return 6;
+        case 5: // May
+            return 1;
+        case 6: // June
+            return 4;
+        case 7: // July
+            return 6;
+        case 8: // August
+            return 2;
+        case 9: // September
+            return 5;
+        case 10: // October
+            return 0;
+        case 11: // November
+            return 3;
+        case 12: // December
+            return 5;
+        default:
+            return 0;
     }
 }
 
-void getInput(int &month, int &day, int &year) {
-    string monthName;
-    cout << "Enter the date (e.g., July 4, 2008): ";
-    cin >> monthName >> day >> year;
+void getInput(int& month, int& day, int& year) {
+    std::string input;
+    std::cout << "Enter the date (e.g., July 4, 2008): ";
+    std::getline(std::cin, input);
 
-    string months[] = {"January", "February", "March", "April", "May", "June",
-                       "July", "August", "September", "October", "November", "December"};
+    // Convert month to lowercase for case-insensitive comparison
+    for (char& c : input) {
+        c = std::tolower(c);
+    }
+
+    std::string monthNames[] = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
 
     for (int i = 0; i < 12; ++i) {
-        if (monthName == months[i]) {
+        if (input.find(monthNames[i]) != std::string::npos) {
             month = i + 1;
-            return;
+            break;
         }
     }
 
-    // If the input is not a month name, assume it's an integer representing the month.
-    month = stoi(monthName);
+    // Extract day and year
+    size_t commaPos = input.find(',');
+    size_t spacePos = input.find_first_of(" \t");
+
+    day = std::stoi(input.substr(spacePos + 1, commaPos - spacePos - 1));
+    year = std::stoi(input.substr(commaPos + 2));
 }
 
 int main() {
@@ -54,8 +81,12 @@ int main() {
 
     int dayOfWeek = (day + getMonthValue(month, year) + getYearValue(year) + getCenturyValue(year)) % 7;
 
-    string daysOfWeek[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-    cout << "The day of the week is: " << daysOfWeek[dayOfWeek] << endl;
+    std::string days[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+    std::cout << "The day of the week is: " << days[dayOfWeek] << std::endl;
 
     return 0;
 }
+
+
+

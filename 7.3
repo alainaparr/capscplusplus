@@ -1,0 +1,50 @@
+#include <iostream>
+
+void delete_repeats(char arr[], int &size) {
+    int index = 0;
+    for (int i = 0; i < size; ++i) {
+        bool isRepeat = false;
+        for (int j = 0; j < index; ++j) {
+            if (arr[i] == arr[j]) {
+                isRepeat = true;
+                break;
+            }
+        }
+        if (!isRepeat) {
+            arr[index++] = arr[i];
+        }
+    }
+    size = index;
+}
+
+int main() {
+    char a[10];
+    int size = 0;
+
+    char choice;
+    do {
+        std::cout << "Enter a character (or enter 'q' to quit): ";
+        std::cin >> choice;
+        
+        if (choice != 'q') {
+            a[size++] = choice;
+        }
+    } while (choice != 'q' && size < 10);
+
+    std::cout << "Original array: ";
+    for (int i = 0; i < size; ++i) {
+        std::cout << a[i] << " ";
+    }
+    std::cout << std::endl;
+
+    delete_repeats(a, size);
+
+    std::cout << "Array after deleting repeats: ";
+    for (int i = 0; i < size; ++i) {
+        std::cout << a[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "Size of the array now: " << size << std::endl;
+
+    return 0;
+}

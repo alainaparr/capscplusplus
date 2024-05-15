@@ -1,0 +1,25 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main() {
+    string firstName, middleName, lastName;
+    char choice;
+
+    do {
+        cout << "Enter the name (First Middle Last): ";
+        cin >> firstName >> middleName >> lastName;
+
+        // Check if middleName is an initial or a full name
+        string middleInitial = (middleName.length() == 1) ? middleName : middleName.substr(0, 1) + ".";
+
+        cout << lastName << ", " << firstName << " " << middleInitial << endl;
+
+        cout << "Do you want to enter another name? (y/n): ";
+        cin >> choice;
+    } while (choice == 'y' || choice == 'Y');
+
+    return 0;
+}
+

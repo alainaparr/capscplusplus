@@ -1,0 +1,62 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+const int NUMBER_OF_CHAPTERS = 17; // Number of chapters in the book
+
+// Function to read a line from the file and return it
+std::string getAnswer(std::ifstream& file) {
+    std::string answer;
+    std::getline(file, answer);
+    return answer;
+}
+
+int main() {
+    std::ifstream answersFile("answers.txt"); // Assuming answers are stored in "answers.txt"
+    
+    if (!answersFile.is_open()) {
+        std::cerr << "Unable to open file." << std::endl;
+        return 1;
+    }
+
+    int currentChapter = NUMBER_OF_CHAPTERS; // Start from the last chapter
+    std::string line;
+    
+    while (true) {
+        std::cout << "Ask a question (or enter 'quit' to exit): ";
+        std::getline(std::cin, line);
+        
+        if (line == "quit")
+            break;
+
+        // Read and discard the question
+        // We're not really paying attention to the question
+        // So, we don't need to do anything with it
+        std::string question = line;
+
+        // Get the answer from the file
+        std::string answer = getAnswer(answersFile);
+
+        // If it's the first answer, replace #N with current chapter number
+        size_t pos = answer.find("#N");
+        if (pos != std::string::npos) {
+            answer.replace(pos, 2, std::to_string(currentChapter));
+            currentChapter--;
+            if (currentChapter == 0)
+                currentChapter = NUMBER_OF_CHAPTERS;
+        }
+
+        // Output the answer
+        std::cout << "Answer: " << answer << std::endl;
+
+        // If we reach the end of the file, reset file pointer to beginning
+        if (answersFile.eof()) {
+            answersFile.clear();
+            answersFile.seekg(0, std::ios::beg);
+        }
+    }
+
+    answersFile.close();
+
+    return 0;
+}

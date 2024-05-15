@@ -1,0 +1,58 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <vector>
+
+using namespace std;
+
+// Function to compute the average of quiz scores
+double computeAverage(const vector<int>& scores) {
+    int sum = 0;
+    for (int score : scores) {
+        sum += score;
+    }
+    return static_cast<double>(sum) / scores.size();
+}
+
+// Function to process the input file and write results to the output file
+void processGrades(const string& inputFile, const string& outputFile) {
+    ifstream inFile(inputFile);
+    ofstream outFile(outputFile);
+
+    if (!inFile) {
+        cerr << "Error: Unable to open input file: " << inputFile << endl;
+        return;
+    }
+
+    if (!outFile) {
+        cerr << "Error: Unable to open output file: " << outputFile << endl;
+        return;
+    }
+
+    string lastName, firstName, line;
+    while (getline(inFile, line)) {
+        istringstream iss(line);
+        vector<int> scores;
+        iss >> lastName >> firstName;
+        int score;
+        while (iss >> score) {
+            scores.push_back(score);
+        }
+        double average = computeAverage(scores);
+        outFile << lastName << " " << firstName << " " << average << endl;
+    }
+
+    cout << "Grades computed and written to " << outputFile << " successfully!" << endl;
+
+    inFile.close();
+    outFile.close();
+}
+
+int main() {
+    string inputFileName = "input.txt"; // Replace with actual input file name
+    string outputFileName = "output.txt"; // Replace with actual output file name
+    processGrades(inputFileName, outputFileName);
+    return 0;
+}
+

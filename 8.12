@@ -1,0 +1,41 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+
+std::string convertToMilitaryTime(const std::string& timeStr) {
+    std::stringstream ss(timeStr);
+    std::string hoursStr, minutesStr, period;
+    std::getline(ss, hoursStr, ':');
+    std::getline(ss, minutesStr, ' ');
+    std::getline(ss, period);
+
+    int hours = std::stoi(hoursStr);
+    int minutes = std::stoi(minutesStr);
+
+    if (period == "PM" && hours != 12) {
+        hours += 12;
+    } else if (period == "AM" && hours == 12) {
+        hours = 0;
+    }
+
+    std::stringstream result;
+    result.fill('0');
+    result.width(2);
+    result << hours;
+    result.width(2);
+    result << minutes;
+    result << " hours";
+    
+    return result.str();
+}
+
+int main() {
+    std::string inputTime;
+    std::cout << "Enter time in format \"HH:MM AM/PM\": ";
+    std::getline(std::cin, inputTime);
+
+    std::string militaryTime = convertToMilitaryTime(inputTime);
+    std::cout << "Military time: " << militaryTime << std::endl;
+
+    return 0;
+}

@@ -1,0 +1,33 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+
+using namespace std;
+
+string replaceDigitsWithX(const string& input) {
+    string output = input;
+    for (size_t i = 0; i < output.length(); ++i) {
+        if (isdigit(output[i])) {
+            output[i] = 'x';
+        }
+    }
+    return output;
+}
+
+int main() {
+    char choice;
+    do {
+        string input;
+        cout << "Enter a line of text: ";
+        getline(cin, input);
+        string output = replaceDigitsWithX(input);
+        cout << "Output: " << output << endl;
+        cout << "Do you want to continue (y/n)? ";
+        cin >> choice;
+        cin.ignore(); // Ignore newline character left in the input buffer
+    } while (tolower(choice) == 'y');
+
+    return 0;
+}
+
+

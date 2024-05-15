@@ -1,0 +1,36 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+string decryptMessage(const string& encryptedMessage, int key) {
+    string decryptedMessage = "";
+
+    for (char encryptedChar : encryptedMessage) {
+        int originalChar = encryptedChar;
+        int decryptedChar;
+
+        if (originalChar == 32) { // Handle space character
+            decryptedChar = originalChar;
+        } else if (originalChar - key < 32) {
+            decryptedChar = 127 - (32 - (originalChar - key));
+        } else {
+            decryptedChar = originalChar - key;
+        }
+
+        decryptedMessage += decryptedChar;
+    }
+
+    return decryptedMessage;
+}
+
+int main() {
+    string interceptedMessage = ":mmZ\\dxZmx]Zpgy";
+
+    for (int key = 1; key <= 100; ++key) {
+        string decryptedMessage = decryptMessage(interceptedMessage, key);
+        cout << "Key: " << key << ", Decrypted Message: " << decryptedMessage << endl;
+    }
+
+    return 0;
+}

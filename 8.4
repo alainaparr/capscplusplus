@@ -1,25 +1,37 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
 int main() {
+    string fullName;
+    cout << "Enter the person's name (First Middle Last): ";
+    getline(cin, fullName);
+
+    // Using stringstream to parse the input
+    stringstream ss(fullName);
     string firstName, middleName, lastName;
-    char choice;
 
-    do {
-        cout << "Enter the name (First Middle Last): ";
-        cin >> firstName >> middleName >> lastName;
+    // Extracting first name
+    ss >> firstName;
 
-        // Check if middleName is an initial or a full name
-        string middleInitial = (middleName.length() == 1) ? middleName : middleName.substr(0, 1) + ".";
-
-        cout << lastName << ", " << firstName << " " << middleInitial << endl;
-
-        cout << "Do you want to enter another name? (y/n): ";
-        cin >> choice;
-    } while (choice == 'y' || choice == 'Y');
+    // Checking if there's a middle name
+    if (ss >> middleName) {
+        // If there's a middle name, we need to check if there's a last name
+        if (ss >> lastName) {
+            // Output the name with middle initial
+            cout << lastName << ", " << firstName << " " << middleName[0] << "." << endl;
+        } else {
+            // If there's no last name, assume the middle name is actually the last name
+            cout << middleName << ", " << firstName << endl;
+        }
+    } else {
+        // If no middle name provided, assume the last word is the last name
+        cout << "Invalid input. Please provide at least a first and last name." << endl;
+    }
 
     return 0;
 }
+
 

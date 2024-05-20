@@ -1,53 +1,70 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <cctype>
+#include <limits>
 
-bool isPartOfWord(char ch) {
-    return std::isalpha(ch) || ch == '_';
-}
-
-std::string replaceDigitsInNumbers(const std::string &input) {
-    std::string output;
-    bool inWord = false;
-
-    for (size_t i = 0; i < input.length(); ++i) {
-        if (std::isdigit(input[i])) {
-            if (!inWord && (i == 0 || !isPartOfWord(input[i - 1])) && (i == input.length() - 1 || !isPartOfWord(input[i + 1]))) {
-                output += 'x';
-            } else {
-                output += input[i];
-            }
-        } else {
-            if (isPartOfWord(input[i])) {
-                inWord = true;
-            } else {
-                inWord = false;
-            }
-            output += input[i];
-        }
+bool isWord(const std::string& str) {
+    for (char c : str) {
+        if (!std::isalpha(c))
+            return false;
     }
-    return output;
+    return true;
 }
+
+std::string replaceDigits(const std::string& line) {
+    std::stringstream ss(line);
+    std::string word, result;
+
+    while (ss >> word) {
+        bool isWord = false; // Flag to indicate if the word contains alphabetic characters
+
+        // Check if the word contains any alphabetic characters
+        for (char c : word) {
+            if (std::isalpha(c)) {
+                isWord = true;
+                break;
+            }
+        }
+
+        if (isWord) {
+            result += word;
+        } else {
+            for (char c : word) {
+                if (std::isdigit(c))
+                    result += 'x';
+                else
+                    result += c;
+            }
+        }
+        result += " ";
+    }
+
+    // Remove the extra space at the end
+    if (!result.empty())
+        result.pop_back();
+
+    return result;
+}
+
 
 int main() {
-    std::string line;
+    std::string input;
     char choice;
 
     do {
         std::cout << "Enter a line of text: ";
-        std::getline(std::cin, line);
+        std::getline(std::cin, input);
 
-        std::string result = replaceDigitsInNumbers(line);
-        std::cout << "Output: " << result << std::endl;
+        std::string output = replaceDigits(input);
+        std::cout << "Output: " << output << std::endl;
 
-        std::cout << "Do you want to process another line (y/n)? ";
+        std::cout << "Do you want to continue (y/n)? ";
         std::cin >> choice;
-        std::cin.ignore(); // to clear the newline character left in the buffer
-
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
     } while (choice == 'y' || choice == 'Y');
 
     return 0;
 }
-
 
 

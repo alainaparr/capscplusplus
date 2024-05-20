@@ -2,32 +2,52 @@
 #include <string>
 #include <cctype>
 
-using namespace std;
+bool isPartOfWord(char ch) {
+    return std::isalpha(ch) || ch == '_';
+}
 
-string replaceDigitsWithX(const string& input) {
-    string output = input;
-    for (size_t i = 0; i < output.length(); ++i) {
-        if (isdigit(output[i])) {
-            output[i] = 'x';
+std::string replaceDigitsInNumbers(const std::string &input) {
+    std::string output;
+    bool inWord = false;
+
+    for (size_t i = 0; i < input.length(); ++i) {
+        if (std::isdigit(input[i])) {
+            if (!inWord && (i == 0 || !isPartOfWord(input[i - 1])) && (i == input.length() - 1 || !isPartOfWord(input[i + 1]))) {
+                output += 'x';
+            } else {
+                output += input[i];
+            }
+        } else {
+            if (isPartOfWord(input[i])) {
+                inWord = true;
+            } else {
+                inWord = false;
+            }
+            output += input[i];
         }
     }
     return output;
 }
 
 int main() {
+    std::string line;
     char choice;
+
     do {
-        string input;
-        cout << "Enter a line of text: ";
-        getline(cin, input);
-        string output = replaceDigitsWithX(input);
-        cout << "Output: " << output << endl;
-        cout << "Do you want to continue (y/n)? ";
-        cin >> choice;
-        cin.ignore(); // Ignore newline character left in the input buffer
-    } while (tolower(choice) == 'y');
+        std::cout << "Enter a line of text: ";
+        std::getline(std::cin, line);
+
+        std::string result = replaceDigitsInNumbers(line);
+        std::cout << "Output: " << result << std::endl;
+
+        std::cout << "Do you want to process another line (y/n)? ";
+        std::cin >> choice;
+        std::cin.ignore(); // to clear the newline character left in the buffer
+
+    } while (choice == 'y' || choice == 'Y');
 
     return 0;
 }
+
 
 

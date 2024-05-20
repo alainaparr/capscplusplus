@@ -1,42 +1,35 @@
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <cctype>
-
-using namespace std;
+#include <string>
 
 int main() {
-    string line;
-    cout << "Enter a line of text: ";
-    getline(cin, line);
+    std::string line;
+    std::cout << "Enter a line of text: ";
+    std::getline(std::cin, line);
 
     // Counting words
+    std::istringstream iss(line);
+    std::string word;
     int wordCount = 0;
-    bool inWord = false;
-    for (char c : line) {
-        if (isalpha(c)) {
-            if (!inWord) {
-                wordCount++;
-                inWord = true;
-            }
-        } else {
-            inWord = false;
+    while (iss >> word) {
+        wordCount++;
+    }
+
+    // Counting letter occurrences
+    std::map<char, int> letterCount;
+    for (char ch : line) {
+        if (std::isalpha(ch)) {
+            ch = std::tolower(ch);
+            letterCount[ch]++;
         }
     }
 
-    cout << wordCount << " words" << endl;
-
-    // Counting occurrences of each letter
-    map<char, int> letterCount;
-    for (char c : line) {
-        if (isalpha(c)) {
-            char lowerC = tolower(c);
-            letterCount[lowerC]++;
-        }
-    }
-
-    // Outputting the letter count
-    for (auto it = letterCount.begin(); it != letterCount.end(); ++it) {
-        cout << it->second << " " << it->first << endl;
+    // Output results
+    std::cout << wordCount << " words" << std::endl;
+    for (const auto& pair : letterCount) {
+        std::cout << pair.second << " " << pair.first << std::endl;
     }
 
     return 0;

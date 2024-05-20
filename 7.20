@@ -5,64 +5,70 @@
 
 using namespace std;
 
-const int MAX_AGE = 120;
+const int MAX_AGE = 121;
 
-void readData(double maleProb[], double femaleProb[]) {
-    ifstream inputFile("LifeDeathProbability.txt");
-    if (!inputFile.is_open()) {
-        cerr << "Error: Unable to open file." << endl;
+// Function to read death probabilities from file
+void readDeathProbabilities(double maleProbabilities[], double femaleProbabilities[]) {
+    ifstream file("LifeDeathProbability.txt");
+    if (!file) {
+        cerr << "Error opening file!" << endl;
         exit(1);
     }
 
     int age;
-    double male, female;
-    while (inputFile >> age >> male >> female) {
-        maleProb[age] = male;
-        femaleProb[age] = female;
+    double maleProb, femaleProb;
+
+    for (int i = 0; i < MAX_AGE; ++i) {
+        file >> age >> maleProb >> femaleProb;
+        if (file.fail()) break;
+        maleProbabilities[age] = maleProb;
+        femaleProbabilities[age] = femaleProb;
     }
 
-    inputFile.close();
+    file.close();
 }
 
-int simulateLife(double prob[]) {
-    srand(time(NULL)); // Seed the random number generator
+// Function to simulate the user's lifespan
+int simulateLifespan(int age, char sex, const double maleProbabilities[], const double femaleProbabilities[]) {
+    srand(time(0));  // Seed the random number generator
 
-    int age = 0;
     while (age < MAX_AGE) {
-        double random = (double)rand() / RAND_MAX; // Generate random number between 0 and 1
+        double deathProb = (sex == 'M' || sex == 'm') ? maleProbabilities[age] : femaleProbabilities[age];
+        double randomNum = static_cast<double>(rand()) / RAND_MAX;
 
-        if (random <= prob[age]) {
-            return age; // Predicts that the user will live to this age
+        if (randomNum <= deathProb) {
+            return age;  // User dies at the current age
         }
+
         age++;
     }
 
-    return MAX_AGE; // User reaches the maximum age
+    return MAX_AGE - 1;  // User lives to the maximum age
 }
 
 int main() {
-    double maleProb[MAX_AGE], femaleProb[MAX_AGE];
-    readData(maleProb, femaleProb);
+    double maleProbabilities[MAX_AGE] = {0};
+    double femaleProbabilities[MAX_AGE] = {0};
 
-    char sex;
-    cout << "Enter your sex (M/F): ";
-    cin >> sex;
+    readDeathProbabilities(maleProbabilities, femaleProbabilities);
 
     int age;
+    char sex;
+
     cout << "Enter your age: ";
     cin >> age;
 
-    int predictedAge;
-    if (sex == 'M' || sex == 'm') {
-        predictedAge = simulateLife(maleProb + age);
-    } else if (sex == 'F' || sex == 'f') {
-        predictedAge = simulateLife(femaleProb + age);
-    } else {
-        cerr << "Error: Invalid input for sex." << endl;
+    cout << "Enter your sex (M/F): ";
+    cin >> sex;
+
+    if (age < 0 || age >= MAX_AGE || (sex != 'M' && sex != 'm' && sex != 'F' && sex != 'f')) {
+        cerr << "Invalid input!" << endl;
         return 1;
     }
 
-    cout << "Based on the simulation, you will likely live to age " << predictedAge << "." << endl;
+    int predictedAge = simulateLifespan(age, sex, maleProbabilities, femaleProbabilities);
+    cout << "Predicted age you will live to: " << predictedAge << endl;
 
     return 0;
 }
+

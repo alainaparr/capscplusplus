@@ -1,51 +1,61 @@
 #include <iostream>
+#include <string>
 #include <cctype>
 
-using namespace std;
-
 int main() {
-    char sentence[101]; // Assuming maximum length of sentence is 100 characters
-    char corrected_sentence[101] = {'\0'}; // Initialize to empty string
+    std::string input;
+    std::string sentence;
 
-    // Input the sentence
-    cout << "Enter a sentence: ";
-    cin.getline(sentence, 101);
+    std::cout << "Enter a sentence (end with a line containing only a period):" << std::endl;
 
-    // Variables to keep track of processing
-    int len = 0; // Length of the sentence
-    bool prev_char_was_space = false; // To handle multiple spaces
-
-    // Process each character of the sentence
-    for (int i = 0; sentence[i] != '\0'; ++i) {
-        char current_char = sentence[i];
-
-        // If it's not a space or newline, make it lowercase
-        if (!isspace(current_char)) {
-            current_char = tolower(current_char);
+    // Read multiple lines of input until a line containing only a period is entered
+    while (true) {
+        std::getline(std::cin, input);
+        if (input == ".") break;
+        if (!sentence.empty()) {
+            sentence += ' ';  // Treat a line break as a single space
         }
-
-        // If it's the first character or the previous character was a space or newline, make it uppercase
-        if (i == 0 || prev_char_was_space) {
-            current_char = toupper(current_char);
-        }
-
-        // If it's not a newline, add it to the corrected sentence
-        if (current_char != '\n') {
-            // If it's not a space or the previous character wasn't a space, add it to the corrected sentence
-            if (!isspace(current_char) || !prev_char_was_space) {
-                corrected_sentence[len++] = current_char;
-            }
-        }
-
-        // Update prev_char_was_space
-        prev_char_was_space = isspace(sentence[i]);
+        sentence += input;
     }
 
-    // Add period at the end
-    corrected_sentence[len++] = '.';
+    // Remove leading spaces
+    size_t start = sentence.find_first_not_of(' ');
+    sentence = (start == std::string::npos) ? "" : sentence.substr(start);
 
-    // Output the corrected sentence
-    cout << "Corrected sentence: " << corrected_sentence << endl;
+    // Correct spacing and capitalization
+    std::string result;
+    bool capitalizeNext = true;
+    bool wasSpace = false;
+
+    for (char c : sentence) {
+        if (std::isspace(c)) {
+            if (!wasSpace) {
+                result += ' ';
+                wasSpace = true;
+            }
+        } else {
+            if (capitalizeNext && std::isalpha(c)) {
+                result += std::toupper(c);
+                capitalizeNext = false;
+            } else {
+                result += std::tolower(c);
+            }
+            wasSpace = false;
+        }
+    }
+
+    // Remove any trailing spaces
+    if (!result.empty() && result.back() == ' ') {
+        result.pop_back();
+    }
+
+    // Ensure the sentence ends with a period
+    if (!result.empty() && result.back() != '.') {
+        result += '.';
+    }
+
+    std::cout << result << std::endl;
 
     return 0;
 }
+

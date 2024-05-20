@@ -1,0 +1,199 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <iomanip>
+
+struct TimeStamp {
+    int hour, minute, second;
+
+    TimeStamp() : hour(0), minute(0), second(0) {}
+
+    TimeStamp(int h, int m, int s) : hour(h), minute(m), second(s) {}
+
+    // Convert time to seconds for easier manipulation
+    int toSeconds() const {
+        return hour * 3600 + minute * 60 + second;
+    }
+
+    // Calculate the difference between two timestamps
+    static TimeStamp diff(const TimeStamp& start, const TimeStamp& end) {
+        int startSec = start.toSeconds();
+        int endSec = end.toSeconds();
+        int diffSec = endSec - startSec;
+
+        if (diffSec < 0) {
+            diffSec += 24 * 3600; // account for the day wrap-around
+        }
+
+        int h = diffSec / 3600;
+        int m = (diffSec % 3600) / 60;
+        int s = diffSec % 60;
+
+        return TimeStamp(h, m, s);
+    }
+};
+
+struct RacerData {
+    int racerNumber;
+    TimeStamp startTime;
+    TimeStamp midTime;
+    TimeStamp endTime;
+};
+
+struct RaceResult {
+    int racerNumber;
+    TimeStamp overallTime;
+    double pace;
+    bool missingSensor;
+    bool suspiciousSplit;
+
+    RaceResult(int number, const TimeStamp& time, double p, bool missing, bool suspicious)
+        : racerNumber(number), overallTime(time), pace(p), missingSensor(missing), suspiciousSplit(suspicious) {}
+};
+
+struct SensorData {
+    int sensorID;
+    int racerNumber;
+    TimeStamp timestamp;
+};
+
+std::vector<SensorData> readRaceLog(const std::string& filename, TimeStamp& gunTime) {
+    std::ifstream file(filename);
+    std::vector<SensorData> data;
+    std::string line;
+
+    if (file.is_open()) {
+        getline(file, line);
+        std::istringstream iss(line);
+        iss >> gunTime.hour >> gunTime.minute >> gunTime.second;
+
+        while (getline(file, line)) {
+            std::istringstream iss(line);
+            SensorData entry;
+            char comma;
+            int h, m, s;
+            iss >> entry.sensorID >> comma >> entry.racerNumber >> comma >> h >> m >> s;
+            entry.timestamp = TimeStamp(h, m, s);
+            data.push_back(entry);
+        }
+    }
+
+    return data;
+}
+
+std::map<int, RacerData> organizeRaceData(const std::vector<SensorData>& data) {
+    std::map<int, RacerData> racerData;
+
+    for (const auto& entry : data) {
+        if (racerData.find(entry.racerNumber) == racerData.end()) {
+            racerData[entry.racerNumber] = {entry.racerNumber, TimeStamp(), TimeStamp(), TimeStamp()};
+        }
+
+        switch (entry.sensorID) {
+            case 0:
+                racerData[entry.racerNumber].startTime = entry.timestamp;
+                break;
+            case 1:
+                racerData[entry.racerNumber].midTime = entry.timestamp;
+                break;
+            case 2:
+                racerData[entry.racerNumber].endTime = entry.timestamp;
+                break;
+        }
+    }
+
+    return racerData;
+}
+
+RaceResult calculateRaceResult(const RacerData& racer, const TimeStamp& gunTime) {
+    TimeStamp start = racer.startTime;
+    TimeStamp mid = racer.midTime;
+    TimeStamp end = racer.endTime;
+
+    // Calculate total time
+    TimeStamp totalTime = TimeStamp::diff(start, end);
+    int totalSeconds = totalTime.toSeconds();
+
+    // Calculate overall pace (in minutes per mile)
+    double totalMiles = 13.1;
+    double totalMinutes = totalSeconds / 60.0;
+    double pace = totalMinutes / totalMiles;
+
+    // Check for missing sensors
+    bool missingSensor = (start.hour == 0 && start.minute == 0 && start.second == 0) ||
+                         (mid.hour == 0 && mid.minute == 0 && mid.second == 0) ||
+                         (end.hour == 0 && end.minute == 0 && end.second == 0);
+
+    // Check for suspiciously fast race splits
+    bool suspiciousSplit = TimeStamp::diff(start, mid).toSeconds() < (4 * 60 + 30);
+
+    return RaceResult(racer.racerNumber, totalTime, pace, missingSensor, suspiciousSplit);
+}
+
+std::vector<RaceResult> calculateRaceResults(const std::map<int, RacerData>& racerData, const TimeStamp& gunTime) {
+    std::vector<RaceResult> results;
+
+    for (const auto& [racerNumber, racer] : racerData) {
+        results.push_back(calculateRaceResult(racer, gunTime));
+    }
+
+    return results;
+}
+
+void determineFinishPlace(std::vector<RaceResult>& results) {
+    std::sort(results.begin(), results.end(), [](const RaceResult& a, const RaceResult& b) {
+        return a.overallTime.toSeconds() < b.overallTime.toSeconds();
+    });
+}
+
+void printRacerResult(const RaceResult& result) {
+    std::cout << "Racer Number: " << result.racerNumber << std::endl;
+    std::cout << "Overall Time: " << std::setw(2) << std::setfill('0') << result.overallTime.hour << ":"
+              << std::setw(2) << std::setfill('0') << result.overallTime.minute << ":"
+              << std::setw(2) << std::setfill('0') << result.overallTime.second << std::endl;
+    std::cout << "Overall Pace: " << std::fixed << std::setprecision(2) << result.pace << " minutes/mile" << std::endl;
+
+    if (result.missingSensor) {
+        std::cout << "Suspicion: Missing sensor(s)" << std::endl;
+    }
+
+    if (result.suspiciousSplit) {
+        std::cout << "Suspicion: Suspiciously fast race split" << std::endl;
+    }
+}
+
+int main() {
+    TimeStamp gunTime;
+    std::vector<SensorData> raceLog = readRaceLog("race_log.txt", gunTime);
+    std::map<int, RacerData> racerData = organizeRaceData(raceLog);
+    std::vector<RaceResult> results = calculateRaceResults(racerData, gunTime);
+    determineFinishPlace(results);
+
+    int racerNumber;
+    std::cout << "Enter racer number: ";
+    std::cin >> racerNumber;
+
+    auto it = std::find_if(results.begin(), results.end(), [racerNumber](const RaceResult& result) {
+        return result.racerNumber == racerNumber;
+    });
+
+    if (it != results.end()) {
+        printRacerResult(*it);
+    } else {
+        std::cout << "Racer number not found." << std::endl;
+    }
+
+    // Output suspected cheaters
+    std::cout << "\nSuspected Cheaters:\n";
+    for (const auto& result : results) {
+        if (result.missingSensor || result.suspiciousSplit) {
+            printRacerResult(result);
+            std::cout << std::endl;
+        }
+    }
+
+    return 0;
+}

@@ -1,93 +1,131 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <sstream>
-#include <iomanip>
+#include <vector>
 #include <algorithm>
 
-using namespace std;
-
-// Structure to store racer data
-struct Racer {
-    int number;
-    vector<string> times; // time stamps for each sensor
+struct RaceData {
+    int sensorID;
+    int racerNumber;
+    int hours;
+    int minutes;
+    int seconds;
 };
 
-// Function to convert time stamp to seconds
-int timeToSeconds(const string& time) {
-    int hours, minutes, seconds;
-    stringstream ss(time);
-    char delimiter;
-    ss >> hours >> delimiter >> minutes >> delimiter >> seconds;
-    return hours * 3600 + minutes * 60 + seconds;
-}
-
-// Function to calculate time difference in minutes
-double calculateTimeDifference(const string& startTime, const string& endTime) {
-    int startSeconds = timeToSeconds(startTime);
-    int endSeconds = timeToSeconds(endTime);
-    return (endSeconds - startSeconds) / 60.0; // convert to minutes
-}
-
-// Function to calculate pace in minutes per mile
-double calculatePace(double timeDifference, double distance) {
-    return timeDifference / distance;
-}
+struct RacerResult {
+    int racerNumber;
+    int finishPlace;
+    double splitTimes[2];
+    double overallTime;
+    double overallPace;
+    bool missedSensor;
+    bool suspiciousSplit;
+};
 
 int main() {
-    ifstream inputFile("16.txt"); // Open the file
-    if (!inputFile) {
-        cerr << "Error: Unable to open file" << endl;
-        return 1;
+    std::ifstream logFile("race_log.txt");
+    std::string line;
+    std::vector<RaceData> raceLog;
+
+    // Read the gun time
+    std::getline(logFile, line);
+
+    // Read the race log data
+    while (std::getline(logFile, line)) {
+        std::istringstream iss(line);
+        RaceData data;
+        char comma;
+
+        iss >> data.sensorID >> comma >> data.racerNumber >> comma >> data.hours >> data.minutes >> data.seconds;
+        raceLog.push_back(data);
     }
 
-    vector<Racer> racers;
-    string line;
-    while (getline(inputFile, line)) { // Read data from file
-        istringstream iss(line);
-        string token;
-        getline(iss, token, ','); // Read sensor ID
-        int sensorID = stoi(token);
-        if (sensorID == 0) { // New racer data
-            Racer racer;
-            getline(iss, token, ','); // Read racer number
-            racer.number = stoi(token);
-            while (getline(inputFile, line)) { // Read racer's times
-                if (line.empty()) break;
-                racer.times.push_back(line);
+    logFile.close();
+
+    // Process the race log data
+    std::vector<RacerResult> results;
+
+    for (const auto& data : raceLog) {
+        if (data.sensorID == 0) {
+            RacerResult result;
+            result.racerNumber = data.racerNumber;
+            result.splitTimes[0] = 0.0;
+            result.splitTimes[1] = 0.0;
+            result.overallTime = 0.0;
+            result.overallPace = 0.0;
+            result.missedSensor = false;
+            result.suspiciousSplit = false;
+            results.push_back(result);
+        }
+    }
+
+    for (auto& result : results) {
+        double startTime = 0.0;
+        double midpointTime = 0.0;
+        double finishTime = 0.0;
+
+        for (const auto& data : raceLog) {
+            if (data.racerNumber == result.racerNumber) {
+                double time = data.hours * 3600 + data.minutes * 60 + data.seconds;
+
+                if (data.sensorID == 0) {
+                    startTime = time;
+                } else if (data.sensorID == 1) {
+                    midpointTime = time;
+                } else if (data.sensorID == 2) {
+                    finishTime = time;
+                }
             }
-            racers.push_back(racer);
+        }
+
+        result.splitTimes[0] = (midpointTime - startTime) / 420; // 7 miles * 60 seconds
+        result.splitTimes[1] = (finishTime - midpointTime) / 366; // 6.1 miles * 60 seconds
+        result.overallTime = finishTime - startTime;
+        result.overallPace = result.overallTime / 786; // 13.1 miles * 60 seconds
+    }
+
+    // Sort the results based on overall time
+    std::sort(results.begin(), results.end(), [](const RacerResult& a, const RacerResult& b) {
+        return a.overallTime < b.overallTime;
+    });
+
+    // Assign finish places
+    for (size_t i = 0; i < results.size(); ++i) {
+        results[i].finishPlace = i + 1;
+    }
+
+    // Detect cheating
+    std::vector<std::pair<int, std::string>> suspectedCheaters;
+
+    for (const auto& result : results) {
+        bool cheated = false;
+        std::string reason;
+
+        // Check for missed sensors
+        if (result.splitTimes[0] == 0.0 || result.splitTimes[1] == 0.0) {
+            cheated = true;
+            reason = "Missed sensor";
+        }
+
+        // Check for suspiciously fast race splits
+        if (result.splitTimes[0] < 4.5 || result.splitTimes[1] < 4.5) {
+            cheated = true;
+            reason = "Suspiciously fast split";
+        }
+
+        if (cheated) {
+            suspectedCheaters.emplace_back(result.racerNumber, reason);
         }
     }
 
-    // Check for cheating
-    vector<pair<int, string>> suspectedCheaters; // Store suspected cheaters with reason
-
-    for (const auto& racer : racers) {
-        // Check for missing sensors
-        if (racer.times.size() < 3) {
-            suspectedCheaters.push_back({racer.number, "Missed sensors (shortcut suspected)"});
-            continue; // Skip further checks for this racer
+    // Print the list of suspected cheaters
+    if (!suspectedCheaters.empty()) {
+        std::cout << "Suspected Cheaters:" << std::endl;
+        for (const auto& cheater : suspectedCheaters) {
+            std::cout << "Racer " << cheater.first << ": " << cheater.second << std::endl;
         }
-
-        // Calculate split times
-        double split1Time = calculateTimeDifference(racer.times.front(), racer.times[1]);
-        double split2Time = calculateTimeDifference(racer.times[1], racer.times.back());
-
-        // Check for suspiciously fast split times
-        if (split1Time < 4.5 || split2Time < 4.5) {
-            suspectedCheaters.push_back({racer.number, "Suspiciously fast split time (vehicle suspected)"});
-        }
-    }
-
-    // Output suspected cheaters
-    if (suspectedCheaters.empty()) {
-        cout << "No suspected cheaters detected." << endl;
     } else {
-        cout << "Suspected cheaters:" << endl;
-        for (const auto& suspected : suspectedCheaters) {
-            cout << "Racer " << suspected.first << ": " << suspected.second << endl;
-        }
+        std::cout << "No suspected cheaters found." << std::endl;
     }
 
     return 0;

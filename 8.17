@@ -108,7 +108,7 @@ int main() {
         }
 
         // Check for suspiciously fast race splits
-        if (result.splitTimes[0] < 4.5 || result.splitTimes[1] < 4.5) {
+        else if (result.splitTimes[0] < 4.5 || result.splitTimes[1] < 4.5) {
             cheated = true;
             reason = "Suspiciously fast split";
         }
